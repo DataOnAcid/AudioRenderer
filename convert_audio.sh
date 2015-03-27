@@ -1,6 +1,13 @@
 #!/bin/bash
 
-INPUT=$1
-OUTPUT=$2
+URL=$1
+OUTPUT=output
 
-chuck dataacid.ck:$INPUT rec.ck:$OUTPUT
+rm -f data.dat data2.dat output.wav
+
+wget -qO data.dat $URL
+
+python play-sound-wav.py data.dat > data2.dat
+chuck dataacid.ck:data2.dat rec.ck:$OUTPUT -s
+
+rm -f data.dat data2.dat output.wav
