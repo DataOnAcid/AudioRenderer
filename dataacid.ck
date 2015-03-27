@@ -14,17 +14,34 @@ Flute flute => PoleZero f => JCRev r => dac;
 .99 => f.blockZero;
 
 .2 => float timeSt;
-// print out all arguments
+//recording
+dac => Gain g => WvOut w => blackhole;
 
 // print out all arguments
-me.arg(0) => string fname;
+me.arg(0) => string inname;
+me.arg(1) => string outname;
 
 int drama[5000];
-readInts(fname) @=> drama;
+//create the array and push into a variable
+readInts(inname) @=> drama;
+
+outname => w.wavFilename;
+
+// any gain you want for the output
+.5 => g.gain;
+
+//start recording
+1 => w.record;
 
 for (0 => int i; i<drama.cap();i++) {
       play(flute,drama[i],.5);
 }
+
+//stop recording
+0 => w.record;
+
+// temporary workaround to automatically close file on remove-shred
+null @=> w;
 
 // play the note
 fun void play(Flute flute, int note, float velocity) {
