@@ -28,6 +28,7 @@ y/=400.
 z = numpy.int16(y * 120)
 
 # create the line needed for chuck
+# note that the first number is the number of subsequent integers
 line = "%5i" % len(z) 
 for i in z:
     line += "%3i " % i
