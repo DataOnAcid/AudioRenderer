@@ -7,9 +7,8 @@ SSI hack March 2015
 
 */
 
-//SawOsc s => dac;
-Flute flute => PoleZero f => JCRev r => dac;
-.95 => r.gain;
+Flute flute => Pan2 p => PoleZero f => JCRev r => dac;
+.8 => r.gain;
 .05 => r.mix;
 .99 => f.blockZero;
 
@@ -18,12 +17,16 @@ Flute flute => PoleZero f => JCRev r => dac;
 dac => Gain g => WvOut w => blackhole;
 
 // print out all arguments
-me.arg(0) => string inname;
-me.arg(1) => string outname;
+me.arg(0) => string original;
+me.arg(1) => string copy;
+me.arg(2) => string outname;
 
-int drama[5000];
+int texta[5000];
+int textb[5000];
+int size;
 //create the array and push into a variable
-readInts(inname) @=> drama;
+readInts(original) @=> texta;
+readInts(copy) @=> textb;
 
 outname => w.wavFilename;
 
@@ -33,8 +36,9 @@ outname => w.wavFilename;
 //start recording
 1 => w.record;
 
-for (0 => int i; i<drama.cap();i++) {
-      play(flute,drama[i],.5);
+for (0 => int i; i<size;i++) {
+      play(flute,texta[i],.5,p,-1);
+      play(flute,textb[i],.5,p,1);
 }
 
 //stop recording
@@ -44,14 +48,16 @@ for (0 => int i; i<drama.cap();i++) {
 null @=> w;
 
 // play the note
-fun void play(Flute flute, int note, float velocity) {
+// play the note
+fun void play(Flute flute, int note, float velocity, Pan2 p, float textpan) {
     // start the note
     Std.mtof( note ) => flute.freq;
     velocity => flute.noteOn;
     .6      => flute.gain;
+    textpan => p.pan;
     100::ms => now;
     velocity => flute.noteOff;
-    //10::ms => now;
+  
 }
 
 // read the ints into an array
@@ -68,8 +74,7 @@ fun int[] readInts(string path) {
     }
     
     // read the size of the array
-    //4096 => int size;
-    file => int size;
+    file => size;
     // now read in the contents
     int ret[size];
     for (0 => int i; i < size; i++) 
