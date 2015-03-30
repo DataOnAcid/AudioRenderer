@@ -24,6 +24,7 @@ me.arg(2) => string outname;
 int texta[5000];
 int textb[5000];
 int size;
+
 //create the array and push into a variable
 readInts(original) @=> texta;
 readInts(copy) @=> textb;
