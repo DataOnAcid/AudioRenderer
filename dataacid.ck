@@ -7,7 +7,7 @@ SSI hack March 2015
 
 */
 
-Flute flute => Pan2 p => PoleZero f => JCRev r => dac;
+Flute flute => PoleZero f => JCRev r => dac;
 .8 => r.gain;
 .05 => r.mix;
 .99 => f.blockZero;
@@ -18,15 +18,13 @@ dac => Gain g => WvOut w => blackhole;
 
 // print out all arguments
 me.arg(0) => string original;
-me.arg(1) => string copy;
-me.arg(2) => string outname;
+me.arg(1) => string outname;
 
 int texta[5000];
-int textb[5000];
+
 int size;
 //create the array and push into a variable
 readInts(original) @=> texta;
-readInts(copy) @=> textb;
 
 outname => w.wavFilename;
 
@@ -37,8 +35,7 @@ outname => w.wavFilename;
 1 => w.record;
 
 for (0 => int i; i<size;i++) {
-      play(flute,texta[i],.5,p,-1);
-      play(flute,textb[i],.5,p,1);
+      play(flute,texta[i],.5);
 }
 
 //stop recording
@@ -49,12 +46,11 @@ null @=> w;
 
 // play the note
 // play the note
-fun void play(Flute flute, int note, float velocity, Pan2 p, float textpan) {
+fun void play(Flute flute, int note, float velocity) {
     // start the note
     Std.mtof( note ) => flute.freq;
     velocity => flute.noteOn;
     .6      => flute.gain;
-    textpan => p.pan;
     100::ms => now;
     velocity => flute.noteOff;
   
